@@ -233,7 +233,7 @@ class HLFInvoke {
 
             if (results && results[1] && results[1].event_status === 'VALID') {
                 logger.info('Successfully committed the change to the ledger by the peer');
-                return { rc: 0, message: 'Successfully committed the change to the ledger by the peer' };//, txid: tx_id.getTransactionID() };
+                return { rc: 0, message: 'Successfully committed the change to the ledger by the peer', txid: tx_id.getTransactionID() };
 
             } else {
                 logger.info('Transaction failed to be committed to the ledger due to ::' + results[1].event_status);
