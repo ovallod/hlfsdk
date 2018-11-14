@@ -87,7 +87,7 @@ class HLFInvoke {
                 this.registrar.enrollmentSecret = this.config.certificateAuthorities[caName].registrar[0].enrollSecret;
             }
             logger.info("enrollRegistrar - enroll registrar ");
-            await this.enrollUser(this.registrar.enrollmentID, this.registrar.enrollmentSecret);
+            await this.login(this.registrar.enrollmentID, this.registrar.enrollmentSecret);
             return { rc: 0, message: 'Successfully enrolled' + this.registrar.enrollmentID };
 
         } catch (err) {
@@ -247,27 +247,26 @@ class HLFInvoke {
     }
 
     /**
-    * enrollUSer   
-    *      
-    *  
+    * Retrieve the credentials of the user, and if doesn't exist, enroll the user  
+    *    
     * 
     * */
-    async enrollUser(userName, secret) {
-        logger.info("enrollUser - " + userName + "/" + secret);
+    async login(userName, secret) {
+        logger.info("login - " + userName + "/" + secret);
         try {
             //load the user who is going to interact with the network
             await this.client.initCredentialStores();
 
-            logger.info("enrollUser - after initCredentialStores " + userName);
+            logger.info("login - after initCredentialStores " + userName);
             // first check to see if the admin is already enrolled
             let user = await this.client.getUserContext(userName, true);
 
-            logger.info("enrollUser - after getUserContext" + user);
+            logger.info("login - after getUserContext" + user);
             if (user && user.isEnrolled()) {
-                logger.info('enrollUser - Successfully loaded user from persistence');
+                logger.info('login - Successfully loaded user from persistence');
             } else {
                 let enrollment = await this.caclient.enroll({ enrollmentID: userName, enrollmentSecret: secret });
-                logger.info('enrollUser - Successfully enrolled member user "' + userName + '" with msp: "' + this.client.getMspid() + '"');
+                logger.info('login - Successfully enrolled member user "' + userName + '" with msp: "' + this.client.getMspid() + '"');
                 user = await this.client.createUser(
                     {
                         username: userName,
@@ -275,11 +274,11 @@ class HLFInvoke {
                         cryptoContent: { privateKeyPEM: enrollment.key.toBytes(), signedCertPEM: enrollment.certificate }
                     });
             }
-            logger.info('enrollUser - setUserContext');
+            logger.info('login - setUserContext');
             return await this.client.setUserContext(user);
 
         } catch (error) {
-            logger.error("enrollUser - " + error);
+            logger.error("login - " + error);
 
         }
     }
