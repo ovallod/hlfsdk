@@ -134,7 +134,7 @@ class HLFInvoke {
             let user_from_store = await this.client.getUserContext(user, true);
 
             if (user_from_store && user_from_store.isEnrolled()) {
-                logger.info('invoke - Successfully loaded admin from persistence');
+                logger.info('invoke - Successfully loaded user:'+ user+' from persistence');
             } else {
                 throw new Error('invoke - Failed to get user:' + user);
             }
@@ -148,7 +148,7 @@ class HLFInvoke {
 
             // send the transaction proposal to the endorsing peers
             let results = await this.channel.sendTransactionProposal(request);
-
+   
             var proposalResponses = results[0];
             var proposal = results[1];
             let isProposalGood = false;
@@ -161,7 +161,7 @@ class HLFInvoke {
             }
             if (isProposalGood) {
                 logger.info(
-                    'Successfully sent Proposal and received ProposalResponse: Status - ' + proposalResponses[0].response.status + ', message - "%s"' +
+                    'Successfully sent Proposal and received ProposalResponse: Status - ' + proposalResponses[0].response.status + ', message - ' +
                     proposalResponses[0].response.message);
 
                 // build up the request for the orderer to have the transaction committed
