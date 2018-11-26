@@ -56,6 +56,13 @@ class HLFInvoke {
 
         logger.info("constructor - before config ");
         this.config = require(networkConfig);
+        if (this.config.client && this.config.client.organization) {
+            orgName = this.config.client.organization;
+        } else {
+            throw "Organization not found.";
+        }
+        this.peerName = this.config.organizations[orgName].peers[0]
+        logger.info("constructor - peerName = "+this.peerName);
 
         logger.info("constructor - ok ");
     }
@@ -182,7 +189,7 @@ class HLFInvoke {
                 // get an eventhub once the fabric client has a user assigned. The user
                 // is required bacause the event registration must be signed
                 logger.info('Getting event hub');
-                let event_hub = this.channel.newChannelEventHub('org1-peer1');
+                let event_hub = this.channel.newChannelEventHub(this.peerName);
 
                 // using resolve the promise so that result status may be processed
                 // under the then clause rather than having the catch clause process
